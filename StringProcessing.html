@@ -1,0 +1,390 @@
+<HTML>
+<HEAD>
+<TITLE>StringProcessing Module Help</TITLE>
+</HEAD>
+<BODY BGCOLOR="#FFFFFF"><FONT FACE="Arial">
+
+
+<CENTER>
+<FONT SIZE="+3" COLOR="#000099"><B> StringProcessing Module 1.0 </B></FONT>
+<BR><FONT SIZE="+1"> Reference Documentation </FONT>
+<HR>
+</CENTER>
+
+
+<P><FONT SIZE="+2" COLOR="#000099"><B> Table of Contents </B></FONT>
+
+<UL>
+  <LI><A HREF="#introduction"> Introduction</A>
+  <LI><A HREF="#application"> Applying this Module</A>
+  <LI><A HREF="#declarations"> Public Declarations</A>
+  <LI><A HREF="#methods"> Public Methods</A>
+  <LI><A HREF="#revisions"> Revision History</A>
+  <LI><A HREF="#credits"> Credits</A>
+</UL>
+
+
+<A NAME="introduction">
+<P><FONT SIZE="+2" COLOR="#000099"><B> Introduction </B></FONT>
+
+<BR>The primary purpose of this module is to provide common string manipulation functionality.  The module was written for Visual Basic 6.0, but should be compatible with most other versions.
+
+<P>VB includes some built-in provisions for string manipulation, but there are a number of functions programmers who need to process textual data often need to deal with validation, translation, and parsing.
+
+<P>This module does not depend on any libraries beyond the one that comes standard with Visual Basic.
+
+
+
+
+<A NAME="application">
+<P><FONT SIZE="+2" COLOR="#000099"><B> Applying this Module </B></FONT>
+<BR>Here is some help for the programmer on how to use this module in his own applications.
+
+<P>A typical business application with a user interface has places where a user can type sequences of text as input.  Many need to be validated.  Here are a few examples of how routines in this module can be used for validation:
+
+<UL><TABLE CELLSPACING="0" CELLPADDING="6" BORDER="2">
+
+  <TR>
+    <TD><NOBR><FONT COLOR="#006600"><TT>
+      Valid = AreDigits(TextInput)
+    </TT></FONT></NOBR></TD><TD>
+      Checks to make sure every character is a digit; i.e., 0 - 9.
+    </TD>
+
+  </TR><TR>
+    <TD><NOBR><FONT COLOR="#006600"><TT>
+      Valid = Len(TextInput) <= 10 _
+      <BR>&nbsp; And AreLetters(TextInput)
+    </TT></FONT></NOBR></TD><TD>
+      Checks to make sure the input is no more than 10 characters and that every character is a letter; i.e., A - Z or a - z.
+    </TD>
+
+  </TR><TR>
+    <TD><NOBR><FONT COLOR="#006600"><TT>
+      Valid = AreLettersOrDigits(TextInput)
+    </TT></FONT></NOBR></TD><TD>
+      Checks to make sure every character is a letter or digit.
+    </TD>
+
+  </TR><TR>
+    <TD><NOBR><FONT COLOR="#006600"><TT>
+      Valid = AreInSet(TextInput, _
+      <BR>&nbsp; CHARSET_PRINTABLE _
+      <BR>&nbsp; & CHARSET_WHITESPACE)
+    </TT></FONT></NOBR></TD><TD>
+      Checks to make sure every character is either printable or whitespace (spaces, tabs, and new-line character combinations).
+    </TD>
+
+  </TR><TR>
+    <TD><NOBR><FONT COLOR="#006600"><TT>
+      Valid = Len(TextInput) = 10 _
+      <BR>&nbsp; And AreDigits(Left(TextInput, 5)) _
+      <BR>&nbsp; And Mid(TextInput, 6) = "-" _
+      <BR>&nbsp; And AreDigits(Right(TextInput, 4))
+    </TT></FONT></NOBR></TD><TD>
+      Confirms that the input is an extended U.S. ZIP code of the form "<TT>DDDDD-DDDD</TT>", where "<TT>D</TT>" is a digit.
+    </TD>
+
+  </TR><TR>
+    <TD><NOBR><FONT COLOR="#006600"><TT>
+      Valid = Len(TextInput) >= 1 _
+      <BR>&nbsp; And Len(TextInput) <= 4 _
+      <BR>&nbsp; AreInSet(TextInput, "ABCDEF"
+      <BR>&nbsp;&nbsp; &CHARSET_DIGITS, False)
+    </TT></FONT></NOBR></TD><TD>
+      Confirms that the input is a hexadecimal number between 0 and FFFF, where every character is either a digit or a letter from A - F (upper or lower case)
+    </TD>
+
+  </TR>
+</TABLE></UL>
+
+<P>Here are some simple examples of how the routines in this module can be used to parse data out of a text stream:
+
+<UL><TABLE CELLSPACING="0" CELLPADDING="6" BORDER="2">
+
+  <TR>
+    <TD><NOBR><FONT COLOR="#006600"><TT>
+      TextInput = " &nbsp; &H00FF "
+      <BR>TextInput = Trim(TextInput)
+      <BR>HexValue = FromHex(Mid(TextInput, 3))
+    </TT></FONT></NOBR></TD><TD>
+      Pick out the hex value 00FF and translate it to its Long integer value, 255.
+    </TD>
+
+  </TR><TR>
+    <TD><NOBR><FONT COLOR="#006600"><TT>
+      TextInput = "Thucydides,Historian|" _
+      <BR>&nbsp; & "Alcibiades,General|Pericles,King|"
+      <BR>&nbsp; & "Brasidas,General|Aristotle,Philosopher"
+      <BR>
+      <BR>GreekDudes = StrSplit(TextInput, "|")
+      <BR>For i = 0 To UBound(GreekDudes)
+      <BR>&nbsp;&nbsp; GreekDudes(i) = StrSplit(GreekDudes(i), ",")
+      <BR>Next
+    </TT></FONT></NOBR></TD><TD>
+      Split the pipe-delimited string into an array of arrays like the following:
+
+      <P><CENTER><TABLE BGCOLOR="#DDDDCC" CELLSPACING="0" CELLPADDING="2" BORDER="1">
+
+        <TR>
+          <TD><TABLE BGCOLOR="#FFFFCC" CELLSPACING="0" CELLPADDING="2" BORDER="1"><TR>
+            <TD> Thucydides </TD>
+            <TD> Historian </TD>
+          </TR></TABLE></TD>
+
+        </TR><TR>
+          <TD><TABLE BGCOLOR="#FFFFCC" CELLSPACING="0" CELLPADDING="2" BORDER="1"><TR>
+            <TD> Alcibiades </TD>
+            <TD> General </TD>
+          </TR></TABLE></TD>
+
+        </TR><TR>
+          <TD><TABLE BGCOLOR="#FFFFCC" CELLSPACING="0" CELLPADDING="2" BORDER="1"><TR>
+            <TD> Pericles </TD>
+            <TD> King </TD>
+          </TR></TABLE></TD>
+
+        </TR><TR>
+          <TD><TABLE BGCOLOR="#FFFFCC" CELLSPACING="0" CELLPADDING="2" BORDER="1"><TR>
+            <TD> Brasidas </TD>
+            <TD> General </TD>
+          </TR></TABLE></TD>
+
+        </TR><TR>
+          <TD><TABLE BGCOLOR="#FFFFCC" CELLSPACING="0" CELLPADDING="2" BORDER="1"><TR>
+            <TD> Aristotle </TD>
+            <TD> Philosopher </TD>
+          </TR></TABLE></TD>
+
+        </TR>
+      </TABLE></CENTER>
+    </TD>
+
+  </TR><TR>
+    <TD><NOBR><FONT COLOR="#006600"><TT>
+      TextInput = <FONT COLOR="#CC3300">&lt;some VB code chunk&gt;</FONT>
+      <BR>
+      <BR>If ParseN(TextInput, 1, _
+      <BR>&nbsp; Array("Public Function ", "(", _
+      <BR>&nbsp;&nbsp; ")", vbCrLf, vbCrLf & "End Function"), _
+      <BR>&nbsp; FnDeclarations) Then
+      <BR>
+      <BR>&nbsp;&nbsp;&nbsp; FnName = FnDeclarations(0)
+      <BR>&nbsp;&nbsp;&nbsp; FnArgs = StrSplit(FnDeclarations(1), ",")
+      <BR>&nbsp;&nbsp;&nbsp; FnReturnType = StrReplace( _
+      <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; FnDeclarations(2), "As ", "")
+      <BR>&nbsp;&nbsp;&nbsp; If FnReturnType = "" Then
+      <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; FnReturnType = "Variant"
+      <BR>&nbsp;&nbsp;&nbsp; End If
+      <BR>&nbsp;&nbsp;&nbsp; FnCodeBody = FnDeclarations(3)
+      <BR>
+      <BR>End If
+      
+      
+    </TT></FONT></NOBR></TD><TD>
+      Finds the first public function declaration and picks out its name, arguments, return type, and even the body of code within it.
+    </TD>
+
+  </TR>
+</TABLE></UL>
+
+<P>Translations can be performed using <TT><A HREF="#method_StrReplace">StrReplace()</A></TT>, a function which serves the same purpose as the newer VB <TT>Replace()</TT> function.  Translations can also be performed using parsing techniques like those shown above and then reassembly of the results to one's liking.  For example, a tab-delimited file could be converted to a comma-delimited one with quotes around each item using the following code:
+
+<P><FONT COLOR="#006600"><PRE>
+    Public Function CommaDelimitedToCommaQuoted(Text As String) As String
+        Dim i As Long, j As Long, Rows, Cells
+        Dim Item As String, NewText As String
+        Rows = StrSplit(Text, vbCrLf)
+        For i = 0 To UBound(Rows)
+            If Rows(i) <> "" Then
+                Cells = StrSplit(Rows(i), vbTab)
+                For j = 0 To UBound(Cells)
+                    If j > 0 Then NewText = NewText & ", "
+                    Item = StrReplace(Cells(j), """", """""")
+                    NewText = NewText & """" & Item & """"
+                Next
+                NewText = NewText & vbCrLf
+            End If
+        Next
+        CommaDelimitedToCommaQuoted = NewText
+    End Function
+</PRE></FONT>
+
+
+<A NAME="declarations">
+<P><FONT SIZE="+2" COLOR="#000099"><B> Public Declarations </B></FONT>
+<BR>This module offers a set of public constant character sets for use with the <TT><A HREF="#method_AreInSet">AreInSet()</TT></A> function:
+
+<TT><UL>
+  <LI>Const <B>CHARSET_LETTERS_UCASE</B> = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+  <LI>Const <B>CHARSET_LETTERS_LCASE</B> = "abcdefghijklmnopqrstuvwxyz"
+  <LI>Const <B>CHARSET_LETTERS</B> = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+  <LI>Const <B>CHARSET_DIGITS</B> = "0123456789"
+  <LI>Const <B>CHARSET_ALPHANUMERIC</B> = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+  <LI>Const <B>CHARSET_PRINTABLE</B> = " !""#$%&'()*+,-./0123456789:;&lt;=&gt;?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~"
+  <LI>Const <B>CHARSET_WHITESPACE</B> = vbCr & vbLf & vbTab & " "
+
+</TT></UL>
+
+
+
+<A NAME="methods">
+<P><FONT SIZE="+2" COLOR="#000099"><B> Public Methods </B></FONT>
+<BR>This module offers the following publicly available functions and subroutines:
+
+<P>
+<A HREF="#method_AreDigits">AreDigits</A> |
+<A HREF="#method_AreInSet">AreInSet</A> |
+<A HREF="#method_AreLetters">AreLetters</A> |
+<A HREF="#method_AreLettersOrDigits">AreLettersOrDigits</A> |
+<A HREF="#method_FromHex">FromHex</A> |
+<A HREF="#method_LeftPad">LeftPad</A> |
+<A HREF="#method_ParseN">ParseN</A> |
+<A HREF="#method_RightPad">RightPad</A> |
+<A HREF="#method_StrReplace">StrReplace</A> |
+<A HREF="#method_StrSplit">StrSplit</A>
+
+
+<A NAME="method_AreDigits">
+<P><FONT SIZE="+1" COLOR="#006699"><B> AreDigits </B></FONT>
+<BR><TT> Function AreDigits(Text As String) As Boolean </TT>
+<P>Are all of the characters in Text digits (i.e., 0 - 9)?
+
+<A NAME="method_AreInSet">
+<P><FONT SIZE="+1" COLOR="#006699"><B> AreInSet </B></FONT>
+<BR><TT> Function AreInSet(Text As String, CharacterSet As String, Optional CaseSensitive As Boolean = True) As Boolean </TT>
+<P>Are all of the characters in Text within the specified set?
+An example of a set is <FONT COLOR="#006600"><TT>"0123456789 .,Ee-"</TT></FONT>, which should suffice to
+recognize most simple number formats and even scientific notation.
+
+
+<A NAME="method_AreLetters">
+<P><FONT SIZE="+1" COLOR="#006699"><B> AreLetters </B></FONT>
+<BR><TT> Function AreLetters(Text As String) As Boolean </TT>
+<P>Are all of the characters in Text letters (i.e., A - Z and a - z)?
+
+<A NAME="method_AreLettersOrDigits">
+<P><FONT SIZE="+1" COLOR="#006699"><B> AreLettersOrDigits </B></FONT>
+<BR><TT> Function AreLettersOrDigits(Text As String) As Boolean </TT>
+<P>Are all of the characters in Text letters or digits?
+
+<A NAME="method_FromHex">
+<P><FONT SIZE="+1" COLOR="#006699"><B> FromHex </B></FONT>
+<BR><TT> Function FromHex(ByVal HexNumber As String) As Long </TT>
+<P>Convert the hexadecimal number into a Long integer.  Hex string
+may not include formatting characters like '&' or 'H'.  This
+function compliments VB's bulit-in Hex() function.
+
+
+<A NAME="method_LeftPad">
+<P><FONT SIZE="+1" COLOR="#006699"><B> LeftPad </B></FONT>
+<BR><TT> Function LeftPad(Value, Size As Long, Optional PadCharacter As String = " ") As String </TT>
+<P>Pad the left side of the string with enough PadCharacter characters
+until the string is Size characters long.
+
+
+<A NAME="method_ParseN">
+<P><FONT SIZE="+1" COLOR="#006699"><B> ParseN </B></FONT>
+<BR><TT> Function ParseN(Text As String, StartAt As Long, PatternArray As Variant, ValueArray As Variant, Optional PosPastEnd, Optional StopAt As Long = 0, Optional Compare As VbCompareMethod = vbBinaryCompare) As Boolean </TT>
+<P>Parse a string of values out of the given text stream.  A typical
+use would be to get information from an HTML file containing the
+following:
+
+<FONT COLOR="#006600"><PRE>  &lt;H2&gt; People: &lt;/H2&gt;
+  &lt;TABLE&gt;
+    &lt;TR&gt;&lt;TH&gt; Name &lt;/TH&gt;&lt;TH&gt; Social Security Number &lt;/TH&gt;&lt;/TR&gt;
+    &lt;TR&gt;&lt;TD&gt; John Doe &lt;/TD&gt;&lt;TD&gt; 123-45-6789 &lt;/TD&gt;&lt;/TR&gt;
+    &lt;TR&gt;&lt;TD&gt; Jane Doe &lt;/TD&gt;&lt;TD&gt; 987-65-4321 &lt;/TD&gt;&lt;/TR&gt;
+  &lt;/TABLE&gt; </PRE></FONT>
+
+If you want to get a list of the people's names and SSNs, the
+following code would work (provided HtmlSource contains the
+contents of the HTML file):
+
+<FONT COLOR="#006600"><PRE>   Dim StartAt As Long, People, Person
+   People = Array(Array("Name", "SSN"))
+   StartAt = 1
+   While ParseN(HtmlSource, StartAt, _
+     Array("<TR><TD>", "</TD><TD>", "</TD></TR>"), _
+     Person, StartAt)
+       ReDim Preserve People(UBound(People) + 1)
+       People(UBound(People)) = Person
+   Wend </PRE></FONT>
+
+When it 's done, the People array would contain a list of arrays
+that represent each person's name and SSN.  That is, its contents
+would be:
+
+<UL><TABLE CELLSPACING="0" CELLPADDING="4" BORDER="1">
+  <TR><TD> Name </TD><TD> SSN </TD></TR>
+  <TR><TD> John Doe </TD><TD> 123-45-6789 </TD></TR>
+  <TR><TD> Jane Doe </TD><TD> 987-65-4321 </TD></TR>
+</TABLE></UL>
+
+PosPastEnd contains the index of the first character right after
+the end of the last PatternArray pattern.  In this case, it would
+point to the new-line characters right after each successive
+"<FONT COLOR="#006600"><TT></TD></TR></TT></FONT>" that follows the SSN.  PosPastEnd's value can, as the
+example here shows, be plugged into StartAt for the next iteration
+of <TT>ParseN()</TT>.  ValueArray is a variant array you pass in that
+<TT>ParseN()</TT> fills with the list of values between each of the search
+patterns.  This will generally be what you're searching for, as
+well as any "random" garbage that might be in the middle (e.g.,
+HTML tag attributes you don't care about like "<FONT COLOR="#006600"><TT>WIDTH=100</TT></FONT>").  If you
+want to keep the search for a segment from spilling over into some
+part of the text stream that you know marks the end of your
+legitimate data, set StopAt to point to the first character of the
+forbidden part of the data to parse.  This might be helpful if,
+say, you had three different HTML tables with the same kind of
+information and you wanted to process them separately.  You could
+search for "<FONT COLOR="#006600"><TT>&lt;TABLE</TT></FONT>" and "<FONT COLOR="#006600"><TT>&lt;/TABLE&gt;</TT></FONT>" in the beginning to find out
+where each table begins and ends, then use <TT>ParseN()</TT> with initial
+StartAt and StopAt attributes set to the beginning and end of each
+table chunk during the While loop.  Always be sure to check the
+return value to make sure it executed successfully.  ValueArray
+may be a misleading indicator, since it may be half-filled before
+<TT>ParseN()</TT> realizes the conditions are only partially met.
+
+
+<A NAME="method_RightPad">
+<P><FONT SIZE="+1" COLOR="#006699"><B> RightPad </B></FONT>
+<BR><TT> Function RightPad(Value, Size As Long, Optional PadCharacter As String = " ") As String </TT>
+<P>Pad the right side of the string with enough PadCharacter characters
+until the string is Size characters long.
+
+<A NAME="method_StrReplace">
+<P><FONT SIZE="+1" COLOR="#006699"><B> StrReplace </B></FONT>
+<BR><TT> Function StrReplace(ByVal Text As String, ByVal SearchFor As String, ByVal ReplaceWith As String, Optional Compare As VbCompareMethod = vbBinaryCompare) As String </TT>
+<P>Replace every occurrance of SearchFor with ReplaceWith.
+The result is returned, but Text is not modified.
+Avoid using vbTextCompare, which can double the execution
+time.  Same functionality as VB's new Replace() function.
+
+
+<A NAME="method_StrSplit">
+<P><FONT SIZE="+1" COLOR="#006699"><B> StrSplit </B></FONT>
+<BR><TT> Function StrSplit(ByVal Text As String, SplitOn As String, Optional Compare As VbCompareMethod = vbBinaryCompare) As Variant </TT>
+<P>Split a string up into an array, splitting wherever SplitOn
+is found.  Same functionality as VB's new Split() function.
+
+
+
+
+
+
+<A NAME="revisions">
+<P><FONT SIZE="+2" COLOR="#000099"><B> Revision History </B></FONT>
+
+<P><FONT SIZE="+1" COLOR="#006699"><B> StringProcessing 1.0 </B></FONT>
+<BR><I> Released 31 May 2000 </I>
+<BR>Initial release
+
+
+
+<A NAME="credits">
+<P><FONT SIZE="+2" COLOR="#000099"><B> Credits </B></FONT>
+<BR>Version 1.0 of the StringProcessing module was created by <B><A HREF="http://alexandria.nu/user/jcarnicelli/">James Vincent Carnicelli</A></B>.  Documentation was prepared by same.
+
+
+</FONT></BODY>
+</HTML>
